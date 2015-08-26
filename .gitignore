@@ -1,0 +1,6 @@
+*.swp
+.*.swp
+*.iml
+.idea
+.project
+node_modules
