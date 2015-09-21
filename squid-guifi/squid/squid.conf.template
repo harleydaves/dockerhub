@@ -1,0 +1,38 @@
+dns_v4_first on
+
+access_log stdio:/var/log/squid3/access.log
+cache_log /var/log/squid3/cache.log
+
+acl localnet dst 10.0.0.0/8
+acl to_privatenet dst 192.168.0.0/16
+acl to_localhost dst 127.0.0.0/8
+
+acl SSL_ports port 443
+
+acl Safe_ports port 80          # http
+acl Safe_ports port 443         # https
+
+acl CONNECT method CONNECT
+
+auth_param basic program /usr/lib/squid3/basic_ncsa_auth /etc/squid/guifinet_passwd
+auth_param basic children 5
+auth_param basic realm Guifi.net proxy-caching web server
+auth_param basic credentialsttl 2 hours
+auth_param basic casesensitive off
+
+acl ncsa_users proxy_auth REQUIRED
+
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+
+http_access deny to_privatenet
+http_access deny to_localhost
+
+http_access allow ncsa_users
+http_access deny all
+
+# Squid normally listens to port 3128
+http_port 3128
+
+#url_rewrite_program /usr/sbin/squidGuard -c /etc/squid/squidGuard.conf
+#redirect_children 4

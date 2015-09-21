@@ -17,6 +17,17 @@ parse_yaml() {
    }'
 }
 
+
+# Create links to the STDOUT and STDERR
+[ -f /var/log/squid3/access.log ] && rm -f /var/log/squid3/access.log
+[ -f /var/log/squid3/cache.log ] && rm -f /var/log/squid3/cache.log
+
+ln -sf /dev/stdout /var/log/squid3/access.log
+ln -sf /dev/stderr /var/log/squid3/cache.log
+
+# Copy the template to the squid.conf directory
+cp -va /config/squid.conf.template /etc/squid3/squid.conf
+
 # Parse YAML
 eval $(parse_yaml config.yml "config_")
 
