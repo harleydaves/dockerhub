@@ -3,8 +3,16 @@ dns_v4_first on
 access_log stdio:/var/log/squid3/access.log
 cache_log /var/log/squid3/cache.log
 
-acl localnet dst 10.0.0.0/8
+acl from_guifinet src 10.0.0.0/8
+acl to_guifinet dst 10.0.0.0/8
+
+acl from_ujinet src 150.128.0.0/16
+acl to_ujinet dst 150.128.0.0/16
+
+acl from_privatenet src 192.168.0.0/16
 acl to_privatenet dst 192.168.0.0/16
+
+act from_localhost src 127.0.0.0/8
 acl to_localhost dst 127.0.0.0/8
 
 acl SSL_ports port 443
@@ -25,7 +33,7 @@ acl ncsa_users proxy_auth REQUIRED
 http_access deny !Safe_ports
 http_access deny CONNECT !SSL_ports
 
-http_access deny to_privatenet
+http_access deny to_privatenet to_local
 http_access deny to_localhost
 
 http_access allow ncsa_users
